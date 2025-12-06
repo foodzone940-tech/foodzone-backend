@@ -5,17 +5,17 @@ import {
     getFavorites
 } from "../controllers/favoriteController.js";
 
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import adminAuth from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
 // Add product to favorites
-router.post("/add", authMiddleware, addFavorite);
+router.post("/add", adminAuth, addFavorite);
 
 // Remove product from favorites
-router.delete("/remove/:id", authMiddleware, removeFavorite);
+router.delete("/remove/:id", adminAuth, removeFavorite);
 
 // Get all favorites of user
-router.get("/", authMiddleware, getFavorites);
+router.get("/", adminAuth, getFavorites);
 
 export default router;
