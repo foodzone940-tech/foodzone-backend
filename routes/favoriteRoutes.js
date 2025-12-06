@@ -19,3 +19,4 @@ router.delete("/remove/:id", adminAuth, removeFavorite);
 router.get("/", adminAuth, getFavorites);
 
 export default router;
+
