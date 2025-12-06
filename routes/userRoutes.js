@@ -1,34 +1,29 @@
 import express from "express";
-import {
-    registerUser,
-    loginUser,
-    getUserProfile,
-    updateUserProfile,
-    deleteUser,
-    getAllUsers
-} from "../controllers/userController.js";
-
-import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { adminAuth } from "../middlewares/adminMiddleware.js";
-
 const router = express.Router();
 
-// Register new user
-router.post("/register", registerUser);
+import {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  updateUserProfile,
+  updateAddress,
+  getUserById
+} from "../controllers/userController.js";
 
-// Login user
+import adminAuth from "../middlewares/adminMiddleware.js";
+
+// User register & login
+router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-// Get logged-in user profile
-router.get("/profile", authMiddleware, getUserProfile);
+// Protected user routes
+router.get("/profile", adminAuth, getUserProfile);
+router.put("/profile/update", adminAuth, updateUserProfile);
 
-// Update profile of logged-in user
-router.put("/profile/update", authMiddleware, updateUserProfile);
+// Address update
+router.put("/address/update", adminAuth, updateAddress);
 
-// Delete user (admin only)
-router.delete("/delete/:id", adminAuth, deleteUser);
-
-// Get all users (admin only)
-router.get("/", adminAuth, getAllUsers);
+// Get user by ID (optional)
+router.get("/:id", adminAuth, getUserById);
 
 export default router;
