@@ -7,23 +7,23 @@ import {
   clearCart
 } from "../controllers/cartController.js";
 
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import adminAuth from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
 // Add Product to Cart
-router.post("/add", authMiddleware, addToCart);
+router.post("/add", adminAuth, addToCart);
 
 // Get User Cart
-router.get("/", authMiddleware, getCart);
+router.get("/", adminAuth, getCart);
 
 // Update Cart Quantity
-router.put("/update/:id", authMiddleware, updateCart);
+router.put("/update/:id", adminAuth, updateCart);
 
 // Delete Single Cart Item
-router.delete("/delete/:id", authMiddleware, deleteCartItem);
+router.delete("/delete/:id", adminAuth, deleteCartItem);
 
 // Clear Entire Cart
-router.delete("/clear", authMiddleware, clearCart);
+router.delete("/clear", adminAuth, clearCart);
 
 export default router;
