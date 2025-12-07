@@ -43,7 +43,6 @@ export const applyReferral = (req, res) => {
     return res.status(400).json({ message: "Missing fields" });
   }
 
-  // Check if referral code exists
   const checkSql = `
     SELECT * FROM referral_codes
     WHERE referral_code = ? AND used = 0
@@ -59,7 +58,6 @@ export const applyReferral = (req, res) => {
 
     const referrer_id = rows[0].user_id;
 
-    // Mark referral as used
     const updateSql = `
       UPDATE referral_codes
       SET used = 1, referred_user_id = ?
@@ -69,7 +67,6 @@ export const applyReferral = (req, res) => {
     db.query(updateSql, [new_user_id, referral_code], (err2) => {
       if (err2) return res.status(500).json({ message: "Failed to update referral", err2 });
 
-      // Credit reward to referrer
       ReferralRewards.create(referrer_id, new_user_id, 20.00, () => {
         return res.json({
           message: "Referral applied successfully",
@@ -84,4 +81,19 @@ export const applyReferral = (req, res) => {
 // 3) Get Referral Rewards
 // --------------------------------------------------
 export const getReferralRewards = (req, res) => {
-  const user_id = req.params.user_id
+  const { user_id } = req.params;
+
+  const sql = `
+    SELECT * FROM referral_rewards
+    WHERE referrer_user_id = ?
+  `;
+
+  db.query(sql, [user_id], (err, rows) => {
+    if (err) return res.status(500).json({ message: "Error fetching rewards", err });
+
+    return res.json({
+      total_rewards: rows.length,
+      rewards: rows,
+    });
+  });
+};
