@@ -1,72 +1,39 @@
-// src/controllers/productController.js
+// src/routes/productRoutes.js
 
-// Dummy product list
-let products = [
-  { id: 1, name: "Pizza", price: 300 },
-  { id: 2, name: "Burger", price: 150 },
-];
+import express from "express";
+import {
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getProducts,
+  getProductById,
+  getProductsByCategory,
+  getVendorProducts,
+} from "../controllers/productController.js"; // ✅ Extension added!
+
+import { vendorAuth } from "../middlewares/vendorMiddleware.js"; // ✅ Make sure filename is exactly this
+
+const router = express.Router();
+
+// ✅ Add new product (Vendor only)
+router.post("/add", vendorAuth, addProduct);
+
+// ✅ Update product (Vendor only)
+router.put("/update/:id", vendorAuth, updateProduct);
+
+// ✅ Delete product (Vendor only)
+router.delete("/delete/:id", vendorAuth, deleteProduct);
 
 // ✅ Get all products
-export const getProducts = (req, res) => {
-  res.status(200).json(products);
-};
+router.get("/", getProducts);
 
-// ✅ Get single product by ID
-export const getProductById = (req, res) => {
-  const product = products.find((p) => p.id === parseInt(req.params.id));
-  if (product) {
-    res.status(200).json(product);
-  } else {
-    res.status(404).json({ message: "Product not found" });
-  }
-};
+// ✅ Get product by ID
+router.get("/:id", getProductById);
 
-// ✅ Add a new product
-export const addProduct = (req, res) => {
-  const { name, price } = req.body;
-  const newProduct = {
-    id: products.length + 1,
-    name,
-    price,
-  };
-  products.push(newProduct);
-  res.status(201).json(newProduct);
-};
+// ✅ Get products by category
+router.get("/category/:category_id", getProductsByCategory);
 
-// ✅ Update a product
-export const updateProduct = (req, res) => {
-  const { name, price } = req.body;
-  const product = products.find((p) => p.id === parseInt(req.params.id));
-  if (product) {
-    product.name = name || product.name;
-    product.price = price || product.price;
-    res.status(200).json(product);
-  } else {
-    res.status(404).json({ message: "Product not found" });
-  }
-};
+// ✅ Get products of logged-in vendor
+router.get("/vendor/list", vendorAuth, getVendorProducts);
 
-// ✅ Delete a product
-export const deleteProduct = (req, res) => {
-  const productIndex = products.findIndex((p) => p.id === parseInt(req.params.id));
-  if (productIndex !== -1) {
-    products.splice(productIndex, 1);
-    res.status(200).json({ message: "Product deleted" });
-  } else {
-    res.status(404).json({ message: "Product not found" });
-  }
-};
-
-// ✅ Dummy for vendor product listing
-export const getVendorProducts = (req, res) => {
-  // Later real logic laga sakte ho vendor ke hisaab se
-  res.status(200).json(products);
-};
-
-// ✅ Dummy for category wise product fetch
-export const getProductsByCategory = (req, res) => {
-  const { category_id } = req.params;
-  // Static data hai, filter ka example:
-  const filtered = products.filter((p) => p.category_id === category_id);
-  res.status(200).json(filtered.length ? filtered : []);
-};
+export default router;
