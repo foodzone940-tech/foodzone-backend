@@ -1,21 +1,22 @@
 import express from "express";
-import {
-    createPayment,
-    verifyPayment,
-    getPaymentStatus
+import { 
+  uploadPayment, 
+  getPaymentStatus,
+  updatePaymentStatus 
 } from "../controllers/paymentController.js";
 
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { adminAuth } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
-// Create payment (Order amount, wallet, online etc.)
-router.post("/create", authMiddleware, createPayment);
+// USER → Upload payment
+router.post("/upload", authMiddleware, uploadPayment);
 
-// Verify payment after success/failure from gateway
-router.post("/verify", authMiddleware, verifyPayment);
-
-// Get payment status by order_id
+// USER → Check payment status
 router.get("/status/:order_id", authMiddleware, getPaymentStatus);
+
+// ADMIN → Update payment status
+router.put("/status/update/:payment_id", adminAuth, updatePaymentStatus);
 
 export default router;
