@@ -1,39 +1,180 @@
-// src/routes/productRoutes.js
+// src/controllers/productController.js
 
-import express from "express";
-import {
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  getProducts,
-  getProductById,
-  getProductsByCategory,
-  getVendorProducts,
-} from "../controllers/productController.js"; // ✅ Extension added!
+import db from "../config/db.js";  // YOUR MySQL pool connection
 
-import { vendorAuth } from "../middlewares/vendorMiddleware.js"; // ✅ Make sure filename is exactly this
+// ================================
+// ADD PRODUCT  ✔
+// ================================
+export const addProduct = async (req, res) => {
+  try {
+    const {
+      vendor_id,
+      category_id,
+      name,
+      description,
+      price,
+      stock,
+      image,
+      status,
+    } = req.body;
 
-const router = express.Router();
+    if (!vendor_id || !category_id || !name || !price) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
-// ✅ Add new product (Vendor only)
-router.post("/add", vendorAuth, addProduct);
+    const sql = `
+      INSERT INTO products 
+      (vendor_id, category_id, name, description, price, stock, image, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-// ✅ Update product (Vendor only)
-router.put("/update/:id", vendorAuth, updateProduct);
+    await db.query(sql, [
+      vendor_id,
+      category_id,
+      name,
+      description,
+      price,
+      stock ?? 0,
+      image ?? "",
+      status ?? 1,
+    ]);
 
-// ✅ Delete product (Vendor only)
-router.delete("/delete/:id", vendorAuth, deleteProduct);
+    res.json({ message: "Product added successfully" });
 
-// ✅ Get all products
-router.get("/", getProducts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-// ✅ Get product by ID
-router.get("/:id", getProductById);
+// ================================
+// UPDATE PRODUCT  ✔
+// ================================
+export const updateProduct = async (req, res) => {
+  try {
+    const product_id = req.params.id;
 
-// ✅ Get products by category
-router.get("/category/:category_id", getProductsByCategory);
+    const {
+      name,
+      description,
+      price,
+      stock,
+      image,
+      category_id,
+      status,
+    } = req.body;
 
-// ✅ Get products of logged-in vendor
-router.get("/vendor/list", vendorAuth, getVendorProducts);
+    const sql = `
+      UPDATE products SET 
+      name = ?, description = ?, price = ?, stock = ?, image = ?,
+      category_id = ?, status = ?
+      WHERE id = ?
+    `;
 
-export default router;
+    await db.query(sql, [
+      name,
+      description,
+      price,
+      stock,
+      image,
+      category_id,
+      status,
+      product_id,
+    ]);
+
+    res.json({ message: "Product updated successfully" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ================================
+// DELETE PRODUCT  ✔
+// ================================
+export const deleteProduct = async (req, res) => {
+  try {
+    const product_id = req.params.id;
+
+    await db.query("DELETE FROM products WHERE id = ?", [product_id]);
+
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ================================
+// GET ALL PRODUCTS  ✔
+// ================================
+export const getProducts = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM products ORDER BY id DESC"
+    );
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ================================
+// GET PRODUCT BY ID  ✔
+// ================================
+export const getProductById = async (req, res) => {
+  try {
+    const product_id = req.params.id;
+
+    const [rows] = await db.query(
+      "SELECT * FROM products WHERE id = ?",
+      [product_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(rows[0]);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ================================
+// GET PRODUCTS BY CATEGORY  ✔
+// ================================
+export const getProductsByCategory = async (req, res) => {
+  try {
+    const category_id = req.params.category_id;
+
+    const [rows] = await db.query(
+      "SELECT * FROM products WHERE category_id = ? ORDER BY id DESC",
+      [category_id]
+    );
+
+    res.json(rows);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ================================
+// GET VENDOR PRODUCTS  ✔
+// ================================
+export const getVendorProducts = async (req, res) => {
+  try {
+    const vendor_id = req.user.vendor_id; // vendorAuth middleware se aya
+
+    const [rows] = await db.query(
+      "SELECT * FROM products WHERE vendor_id = ? ORDER BY id DESC",
+      [vendor_id]
+    );
+
+    res.json(rows);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
