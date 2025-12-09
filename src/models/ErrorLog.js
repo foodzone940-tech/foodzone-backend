@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 const ErrorLog = {
 
@@ -31,3 +32,4 @@ const ErrorLog = {
 };
 
 export default ErrorLog;
+
