@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 // -----------------------------------
 // Start Chat (User ↔ Vendor)
@@ -99,3 +100,4 @@ export const getMessages = (req, res) => {
     });
   });
 };
+
