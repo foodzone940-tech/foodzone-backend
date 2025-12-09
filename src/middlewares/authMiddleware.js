@@ -1,3 +1,5 @@
+// src/middlewares/authMiddleware.js
+
 import jwt from "jsonwebtoken";
 
 export const authMiddleware = (req, res, next) => {
@@ -15,3 +17,6 @@ export const authMiddleware = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+// ✅ Add this for default import compatibility
+export default authMiddleware;
