@@ -1,5 +1,7 @@
 // models/Cart.js
 
+import db from "../config/db.js";   // ✔ MOST IMPORTANT LINE
+
 export const createCartTable = `
 CREATE TABLE IF NOT EXISTS Cart (
   id INT PRIMARY KEY AUTO_INCREMENT,
