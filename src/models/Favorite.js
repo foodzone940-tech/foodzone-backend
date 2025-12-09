@@ -1,4 +1,6 @@
 // models/Favorite.js
+import db from "../config/db.js";
+
 
 export const createFavoriteTable = `
 CREATE TABLE IF NOT EXISTS Favorite (
@@ -8,3 +10,4 @@ CREATE TABLE IF NOT EXISTS Favorite (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 `;
+
