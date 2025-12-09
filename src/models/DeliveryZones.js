@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 const DeliveryZones = {
 
@@ -50,3 +51,4 @@ const DeliveryZones = {
 };
 
 export default DeliveryZones;
+
