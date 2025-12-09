@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 // ADD item to cart
 export const addToCart = (req, res) => {
@@ -106,3 +107,4 @@ export const clearCart = (req, res) => {
         });
     });
 };
+
