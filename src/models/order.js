@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";   // ✔ MUST HAVE
+
 
 const Order = {
 
@@ -66,3 +67,4 @@ const Order = {
 };
 
 export default Order;
+
