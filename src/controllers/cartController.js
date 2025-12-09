@@ -1,110 +1,70 @@
 import db from "../config/db.js";
 
-
-// ADD item to cart
+// ADD ITEM TO CART
 export const addToCart = (req, res) => {
-    const { user_id, product_id, quantity } = req.body;
+  const { user_id, product_id, quantity } = req.body;
 
-    if (!user_id || !product_id || !quantity) {
-        return res.status(400).json({
-            success: false,
-            message: "Missing required fields"
-        });
-    }
+  if (!user_id || !product_id)
+    return res.status(400).json({ message: "Missing fields" });
 
-    // Check if product already exists in cart
-    const checkSql = "SELECT * FROM Cart WHERE user_id=? AND product_id=?";
-    db.query(checkSql, [user_id, product_id], (err, result) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "DB error" });
-        }
+  const sql = `
+    INSERT INTO Cart (user_id, product_id, quantity)
+    VALUES (?, ?, ?)
+  `;
 
-        if (result.length > 0) {
-            // Update quantity
-            const updateSql = "UPDATE Cart SET quantity = quantity + ? WHERE user_id=? AND product_id=?";
-            db.query(updateSql, [quantity, user_id, product_id], (err) => {
-                if (err) return res.status(500).json({ success: false, message: "DB error" });
+  db.query(sql, [user_id, product_id, quantity || 1], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-                return res.status(200).json({
-                    success: true,
-                    message: "Cart updated successfully"
-                });
-            });
-        } else {
-            // Insert new item
-            const insertSql = "INSERT INTO Cart (user_id, product_id, quantity) VALUES (?,?,?)";
-            db.query(insertSql, [user_id, product_id, quantity], (err) => {
-                if (err) return res.status(500).json({ success: false, message: "DB error" });
-
-                return res.status(200).json({
-                    success: true,
-                    message: "Item added to cart"
-                });
-            });
-        }
-    });
+    return res.json({ message: "Item added to cart" });
+  });
 };
 
-// GET user cart
+// UPDATE CART (quantity update)
+export const updateCart = (req, res) => {
+  const { id, quantity } = req.body;
+
+  if (!id || !quantity)
+    return res.status(400).json({ message: "Missing fields" });
+
+  const sql = `
+    UPDATE Cart SET quantity = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [quantity, id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    return res.json({ message: "Cart updated successfully" });
+  });
+};
+
+// GET CART
 export const getCart = (req, res) => {
-    const { user_id } = req.params;
+  const { user_id } = req.params;
 
-    const sql = `
-        SELECT 
-            Cart.id,
-            Cart.quantity,
-            Products.id AS product_id,
-            Products.name,
-            Products.price,
-            Products.image
-        FROM Cart
-        INNER JOIN Products ON Cart.product_id = Products.id
-        WHERE Cart.user_id = ?
-    `;
+  const sql = `
+    SELECT Cart.*, Products.name, Products.price
+    FROM Cart
+    JOIN Products ON Cart.product_id = Products.id
+    WHERE Cart.user_id = ?
+  `;
 
-    db.query(sql, [user_id], (err, result) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "DB error" });
-        }
+  db.query(sql, [user_id], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-        return res.status(200).json({
-            success: true,
-            data: result
-        });
-    });
+    return res.json(rows);
+  });
 };
 
-// DELETE item from cart
+// DELETE CART ITEM
 export const deleteCartItem = (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const sql = "DELETE FROM Cart WHERE id=?";
-    db.query(sql, [id], (err) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "DB error" });
-        }
+  const sql = `DELETE FROM Cart WHERE id = ?`;
 
-        return res.status(200).json({
-            success: true,
-            message: "Item removed from cart"
-        });
-    });
+  db.query(sql, [id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    return res.json({ message: "Item removed from cart" });
+  });
 };
-
-// CLEAR user cart
-export const clearCart = (req, res) => {
-    const { user_id } = req.params;
-
-    const sql = "DELETE FROM Cart WHERE user_id=?";
-    db.query(sql, [user_id], (err) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "DB error" });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Cart cleared"
-        });
-    });
-};
-
