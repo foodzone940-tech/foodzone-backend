@@ -1,3 +1,5 @@
+import db from "../config/db.js";   // <-- SABSE IMPORTANT LINE
+
 // Deduct Money from Wallet
 export const deductWalletBalance = (req, res) => {
     const { user_id, amount } = req.body;
