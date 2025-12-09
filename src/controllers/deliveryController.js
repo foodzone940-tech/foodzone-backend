@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 /* ============================================
    ADMIN → ASSIGN DELIVERY BOY TO AN ORDER
