@@ -1,3 +1,5 @@
+// src/middlewares/adminMiddleware.js
+
 import jwt from "jsonwebtoken";
 
 // Admin Middleware (Only Admin Can Access)
@@ -32,3 +34,6 @@ export const adminAuth = (req, res, next) => {
         });
     }
 };
+
+// ✅ Default export added for ES Module compatibility
+export default adminAuth;
