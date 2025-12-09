@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 const VendorPayouts = {
 
@@ -45,3 +46,4 @@ const VendorPayouts = {
 };
 
 export default VendorPayouts;
+
