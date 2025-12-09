@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 import ReferralRewards from "../models/Referral.js";
 
 // Generate random referral code
@@ -97,3 +98,4 @@ export const getReferralRewards = (req, res) => {
     });
   });
 };
+
