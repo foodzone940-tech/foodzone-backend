@@ -1,5 +1,7 @@
 // models/Log.js
 
+import db from "../config/db.js";   // ✔ IMPORTANT
+
 export const createLogTable = `
 CREATE TABLE IF NOT EXISTS Logs (
   id INT PRIMARY KEY AUTO_INCREMENT,
