@@ -1,4 +1,5 @@
-import db from "../db.js";
+import db from "../config/db.js";
+
 
 // Add to Favorites
 export const addFavorite = (req, res) => {
@@ -86,3 +87,4 @@ export const getFavorites = (req, res) => {
         });
     });
 };
+
