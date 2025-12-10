@@ -18,7 +18,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import referralRoutes from "./routes/referralRoutes.js";
-import walletRoutes from "./routes/walletRoutes.js";
+
 import logRoutes from "./routes/logRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import vendorRoutes from "./routes/vendorRoutes.js";
@@ -55,3 +55,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
