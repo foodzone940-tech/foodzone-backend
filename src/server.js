@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import db from "./config/db.js";   // ✔ CORRECT PATH
+import db from "./config/db.js";
 
 dotenv.config();
 const app = express();
@@ -25,9 +25,6 @@ import vendorRoutes from "./routes/vendorRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 
-// ⭐ IMPORTANT: Agar delivery boy use nahi karte ho, to isko hata do
-// import deliveryRoutes from "./routes/deliveryRoutes.js";
-
 // Route Mount
 app.use("/api/app", appRoutes);
 app.use("/api/user", userRoutes);
@@ -35,15 +32,11 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/fav", favoriteRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/referral", referralRoutes);
-app.use("/api/wallet", walletRoutes);
 app.use("/api/logs", logRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/vendors", vendorRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-
-// ⭐ Remove if no delivery boy
-// app.use("/api/delivery", deliveryRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
@@ -55,4 +48,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
