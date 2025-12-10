@@ -13,10 +13,10 @@ const router = express.Router();
 // Get logged-in user's wallet balance
 router.get("/", authMiddleware, getWalletBalance);
 
-// Add money to wallet (Referral, Cashback, Refund)
+// Add money to wallet
 router.post("/add", authMiddleware, addMoney);
 
-// Deduct money from wallet (Order payment)
+// Deduct money from wallet
 router.post("/deduct", authMiddleware, deductWalletBalance);
 
 // Get wallet transaction history
