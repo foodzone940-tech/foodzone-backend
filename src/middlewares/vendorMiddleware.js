@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 
-// Vendor Middleware (Only Vendors Can Access)
 export const vendorAuth = (req, res, next) => {
     const token = req.headers["authorization"];
 
@@ -12,17 +11,14 @@ export const vendorAuth = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
+        const decoded = jwt.verify(
+            token.replace("Bearer ", ""),
+            process.env.JWT_SECRET
+        );
 
-        // Role check
-        if (decoded.role !== "vendor") {
-            return res.status(403).json({
-                success: false,
-                message: "Access denied, Vendor only"
-            });
-        }
+        // yahan role check hata diya gaya
+        req.user = { id: decoded.id };
 
-        req.vendor = decoded;
         next();
 
     } catch (error) {
