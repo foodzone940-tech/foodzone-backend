@@ -1,12 +1,39 @@
 import db from "../config/db.js";
 
 // =======================
+// GET WALLET BALANCE
+// =======================
+export const getWalletBalance = (req, res) => {
+    const user_id = req.user?.id || req.params.user_id;
+
+    if (!user_id) {
+        return res.status(400).json({ message: "User ID missing" });
+    }
+
+    const sql = "SELECT balance FROM wallet WHERE user_id = ?";
+
+    db.query(sql, [user_id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err });
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "Wallet not found" });
+        }
+
+        res.json({
+            success: true,
+            balance: rows[0].balance
+        });
+    });
+};
+
+// =======================
 // ADD MONEY TO WALLET
 // =======================
 export const addMoney = (req, res) => {
-    const { user_id, amount } = req.body;
+    const { amount } = req.body;
+    const user_id = req.user.id;
 
-    if (!user_id || !amount) {
+    if (!amount || !user_id) {
         return res.status(400).json({ message: "Missing fields" });
     }
 
@@ -27,9 +54,9 @@ export const addMoney = (req, res) => {
         db.query(updateWallet, [amount, user_id], (err2) => {
             if (err2) return res.status(500).json({ error: err2 });
 
-            return res.json({
+            res.json({
                 success: true,
-                message: "Amount added to wallet",
+                message: "Amount added successfully",
                 amount
             });
         });
@@ -40,9 +67,10 @@ export const addMoney = (req, res) => {
 // DEDUCT MONEY FROM WALLET
 // =======================
 export const deductWalletBalance = (req, res) => {
-    const { user_id, amount } = req.body;
+    const { amount } = req.body;
+    const user_id = req.user.id;
 
-    if (!user_id || !amount) {
+    if (!amount || !user_id) {
         return res.status(400).json({ message: "Missing fields" });
     }
 
@@ -51,7 +79,9 @@ export const deductWalletBalance = (req, res) => {
     db.query(checkBalance, [user_id], (err, rows) => {
         if (err) return res.status(500).json({ error: err });
 
-        if (rows.length === 0 || rows[0].balance < amount) {
+        const balance = rows[0]?.balance || 0;
+
+        if (balance < amount) {
             return res.status(400).json({ message: "Insufficient balance" });
         }
 
@@ -72,9 +102,9 @@ export const deductWalletBalance = (req, res) => {
             db.query(updateWallet, [amount, user_id], (err3) => {
                 if (err3) return res.status(500).json({ error: err3 });
 
-                return res.json({
+                res.json({
                     success: true,
-                    message: "Amount deducted from wallet",
+                    message: "Amount deducted successfully",
                     amount
                 });
             });
@@ -83,23 +113,23 @@ export const deductWalletBalance = (req, res) => {
 };
 
 // =======================
-// GET WALLET BALANCE
+// WALLET TRANSACTION HISTORY
 // =======================
-export const getWalletBalance = (req, res) => {
-    const { user_id } = req.params;
+export const walletHistory = (req, res) => {
+    const user_id = req.user.id;
 
-    const sql = "SELECT balance FROM wallet WHERE user_id = ?";
+    const sql = `
+        SELECT * FROM wallet_transactions
+        WHERE user_id = ?
+        ORDER BY id DESC
+    `;
 
     db.query(sql, [user_id], (err, rows) => {
         if (err) return res.status(500).json({ error: err });
 
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "Wallet not found" });
-        }
-
-        return res.json({
+        res.json({
             success: true,
-            balance: rows[0].balance
+            history: rows
         });
     });
 };
