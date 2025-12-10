@@ -1,8 +1,8 @@
 import express from "express";
 import {
-    getWallet,
+    getWalletBalance,
     addMoney,
-    deductMoney,
+    deductWalletBalance,
     walletHistory
 } from "../controllers/walletController.js";
 
@@ -11,13 +11,13 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // Get logged-in user's wallet balance
-router.get("/", authMiddleware, getWallet);
+router.get("/", authMiddleware, getWalletBalance);
 
 // Add money to wallet (Referral, Cashback, Refund)
 router.post("/add", authMiddleware, addMoney);
 
 // Deduct money from wallet (Order payment)
-router.post("/deduct", authMiddleware, deductMoney);
+router.post("/deduct", authMiddleware, deductWalletBalance);
 
 // Get wallet transaction history
 router.get("/history", authMiddleware, walletHistory);
