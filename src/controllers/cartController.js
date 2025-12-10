@@ -117,3 +117,4 @@ export const clearCart = (req, res) => {
     return res.json({ message: "Cart cleared successfully" });
   });
 };
+
