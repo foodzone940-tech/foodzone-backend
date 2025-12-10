@@ -54,7 +54,7 @@ export const vendorLogin = async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    // FINAL FIX: Add role to token
+    // FINAL FIX → TOKEN WITH ROLE
     const token = jwt.sign(
       { id: vendor.id, role: "vendor" },
       process.env.JWT_SECRET,
