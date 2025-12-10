@@ -54,9 +54,12 @@ export const vendorLogin = async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: vendor.id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // FINAL FIX: Add role to token
+    const token = jwt.sign(
+      { id: vendor.id, role: "vendor" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     res.json({ message: "Login successful", token, vendor });
   } catch (error) {
@@ -103,7 +106,7 @@ export const updateVendorProfile = async (req, res) => {
 };
 
 // =========================
-// GET VENDOR ORDERS (FIX ADDED)
+// GET VENDOR ORDERS
 // =========================
 export const getVendorOrders = async (req, res) => {
   try {
