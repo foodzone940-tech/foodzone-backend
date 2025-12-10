@@ -3,8 +3,7 @@ import {
   addToCart,
   getCart,
   updateCart,
-  deleteCartItem,
-  clearCart
+  deleteCartItem
 } from "../controllers/cartController.js";
 
 import { authMiddleware } from "../middlewares/authMiddleware.js";
@@ -22,8 +21,5 @@ router.put("/update/:id", authMiddleware, updateCart);
 
 // Delete Single Cart Item
 router.delete("/delete/:id", authMiddleware, deleteCartItem);
-
-// Clear Entire Cart
-router.delete("/clear", authMiddleware, clearCart);
 
 export default router;
